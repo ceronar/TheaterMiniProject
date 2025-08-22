@@ -4,6 +4,7 @@ import com.itgroup.bean.*;
 import com.itgroup.dao.*;
 
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class DataManager {
     private MovieDao mDao = null;
@@ -21,9 +22,31 @@ public class DataManager {
     }
 
     // MovieDAO
-    public void addMovie() {
+    public void addMovie(Scanner sc) {
+        int cnt = -1;
         Movie movie = new Movie();
-
+        System.out.print("영화 제목 : ");
+        movie.setTitle(sc.nextLine());
+        System.out.print("가격 : ");
+        movie.setPrice(Integer.parseInt(sc.nextLine()));
+        String date = "";
+        while (true) {
+            System.out.print("개봉일(YYYY-MM-DD) : ");
+            date = sc.nextLine();
+            String regex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
+            if (Pattern.matches(regex, date)) {
+                break;
+            } else {
+                System.out.println("유효하지 않은 날짜 형식입니다.");
+            }
+        }
+        movie.setReleaseDate(date);
+        cnt = mDao.addMovie(movie);
+        if(cnt > 0) {
+            System.out.println("영화 추가 성공");
+        } else {
+            System.out.println("영화 추가 실패");
+        }
     }
 
     public void getMovieById(int movieId) {
