@@ -20,9 +20,7 @@ public class SuperDao {
         String pw = "hello1234";
         try {
             conn = DriverManager.getConnection(url, id, pw);
-            System.out.println("접속 성공");
         } catch (SQLException e) {
-            System.out.println("접속 실패");
             e.printStackTrace();
         }
         return conn;
