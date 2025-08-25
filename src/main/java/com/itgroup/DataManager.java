@@ -208,13 +208,32 @@ public class DataManager {
         }
     }
 
-    public void getAllTheaters() {
-
-    }
-
     // ScheduleDAO
-    public void addSchedule(Schedule schedule) {
-
+    public void addSchedule(Scanner sc) {
+        int cnt = -1;
+        Schedule schedule = new Schedule();
+        System.out.print("관 번호 : ");
+        schedule.setTheaterId(Integer.parseInt(sc.nextLine()));
+        System.out.print("영화 번호 : ");
+        schedule.setMovieId(Integer.parseInt(sc.nextLine()));
+        String showTime = "";
+        while (true) {
+            System.out.print("상영시간(YYYY-MM-DD HH:MM) : ");
+            showTime = sc.nextLine();
+            String regex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]) ([01]\\d|2[0-3]):([0-5]\\d)$";
+            if (Pattern.matches(regex, showTime)) {
+                break;
+            } else {
+                System.out.println("유효하지 않은 날짜 형식입니다.");
+            }
+        }
+        schedule.setShowTime(showTime);
+        cnt = sDao.addSchedule(schedule);
+        if(cnt > 0) {
+            System.out.println("관 추가 성공");
+        } else {
+            System.out.println("관 추가 실패");
+        }
     }
 
     public void getScheduleById(int scheduleId) {

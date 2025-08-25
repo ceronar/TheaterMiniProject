@@ -49,7 +49,23 @@ public class TheaterDao extends SuperDao {
 
     public Theater getTheaterById(int theaterId) {
         Theater bean = null;
-
+        String sql = "SELECT * FROM THEATER WHERE THEATER_ID = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = super.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, theaterId);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                bean = this.makeBean(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            super.close(rs, pstmt, conn);
+        }
         return bean;
     }
 }

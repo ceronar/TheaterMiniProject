@@ -29,6 +29,13 @@ public class ScheduleDao extends SuperDao {
     }
 
     public List<Schedule> getSchedulesByMovieId(int movieId) {
+
+
         return null;
+    }
+
+    public int addSchedule(Schedule schedule) {
+        int cnt = -1;
+        return cnt;
     }
 }
