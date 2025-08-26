@@ -4,9 +4,9 @@ public class Schedule {
     private int scheduleId;     //SCHEDULE_ID	NUMBER
     private int movieId;        //MOVIE_ID	    NUMBER
     private int theaterId;      //THEATER_ID	NUMBER
-    private String showTime;    //SHOW_TIME	    TIMESTAMP(6)
-    private String movieName;   // 영화 이름 join용
-    private String name;        // 영화관 이름 join용
+    private String showTime;    //SHOW_TIME	    DATE
+    private String title;       //TITLE 영화 이름 join용
+    private String name;        //NAME 영화관 이름 join용
 
     public Schedule() {
     }
@@ -50,12 +50,12 @@ public class Schedule {
         this.showTime = showTime;
     }
 
-    public String getMovieName() {
-        return movieName;
+    public String getTitle() {
+        return title;
     }
 
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getName() {

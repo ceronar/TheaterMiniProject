@@ -6,7 +6,7 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
@@ -24,7 +24,8 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="6c62e80d-3ae9-4183-ba7e-4d6c6a41fe35">
-      <console name="Connection" type="STANDARD" schema="SUNDORI" session="Main"><![CDATA[select * from users;]]></console>
+      <console name="Connection" type="STANDARD" schema="SUNDORI" session="Main"><![CDATA[SELECT S.SCHEDULE_ID, S.MOVIE_ID, S.THEATER_ID, S.SHOW_TIME, M.TITLE, T.NAME FROM SCHEDULE S JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID WHERE S.MOVIE_ID = 1 ORDER BY S.SHOW_TIME;
+select systimestamp from dual;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">

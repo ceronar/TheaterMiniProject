@@ -3,6 +3,8 @@ package com.itgroup.dao;
 import com.itgroup.bean.Theater;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TheaterDao extends SuperDao {
     public TheaterDao() {
@@ -67,5 +69,75 @@ public class TheaterDao extends SuperDao {
             super.close(rs, pstmt, conn);
         }
         return bean;
+    }
+
+    public List<Theater> getAllTheaters() {
+        List<Theater> theaterList = new ArrayList<>();
+        String sql = "SELECT * FROM THEATER";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = super.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                theaterList.add(this.makeBean(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            super.close(rs, pstmt, conn);
+        }
+        return theaterList;
+    }
+
+    public int updateTheater(Theater upTheater) {
+        int cnt = -1;
+        String sql ="update THEATER set NAME = ? where THEATER_ID = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = super.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, upTheater.getName());
+            pstmt.setInt(2, upTheater.getTheaterId());
+            cnt = pstmt.executeUpdate();
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            super.close(null, pstmt, conn);
+        }
+        return cnt;
+    }
+
+    public int deleteTheater(int theaterId) {
+        int cnt = -1;
+        String sql = "delete from theater where THEATER_ID = ?";
+        PreparedStatement pstmt = null;
+        Connection conn = null;
+        try {
+            conn = super.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, theaterId);
+            cnt = pstmt.executeUpdate();
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            super.close(null, pstmt, conn);
+        }
+        return cnt;
     }
 }

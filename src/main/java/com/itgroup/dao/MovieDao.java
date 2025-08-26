@@ -1,6 +1,7 @@
 package com.itgroup.dao;
 
 import com.itgroup.bean.Movie;
+import com.itgroup.bean.Theater;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -51,8 +52,26 @@ public class MovieDao extends SuperDao {
         return cnt;
     }
 
-    public void getMovieById(int movieId) {
-
+    public Movie getMovieById(int movieId) {
+        Movie movie = new Movie();
+        String sql = "SELECT * FROM MOVIE WHERE MOVIE_ID = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = super.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, movieId);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                movie = this.makeBean(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            super.close(rs, pstmt, conn);
+        }
+        return movie;
     }
 
     public List<Movie> getAllMovies() {

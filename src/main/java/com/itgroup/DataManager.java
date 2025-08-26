@@ -53,9 +53,13 @@ public class DataManager {
     public void getAllMovies() {
         List<Movie> movieList = mDao.getAllMovies();
         if (movieList != null) {
-            System.out.println("영화번호\t영화제목\t가격\t개봉일");
+            System.out.printf("%-5s %-20s %-8s %-12s%n", "번호", "제목", "가격", "개봉일");
             for (Movie bean : movieList) {
-                System.out.println(bean.getMovieId()+"\t"+bean.getTitle()+"\t"+bean.getPrice()+"\t"+bean.getReleaseDate());
+                System.out.printf("%-5d %-20s %-8d %-12s%n",
+                        bean.getMovieId(),
+                        bean.getTitle(),
+                        bean.getPrice(),
+                        bean.getReleaseDate());
             }
         } else {
             System.out.println("개봉중인 영화가 없습니다.");
@@ -208,6 +212,48 @@ public class DataManager {
         }
     }
 
+    public void updateTheater(Scanner sc) {
+        int cnt = -1;
+        Theater upTheater = new Theater();
+        System.out.print("영화관 번호 : ");
+        upTheater.setTheaterId(Integer.parseInt(sc.nextLine()));
+        System.out.print("변경할 영화관 이름 : ");
+        upTheater.setName(sc.nextLine());
+        cnt = tDao.updateTheater(upTheater);
+        if(cnt > 0) {
+            System.out.println("영화 정보 변경 성공");
+        } else {
+            System.out.println("영화 정보 변경 실패");
+        }
+    }
+
+    public void deleteTheater(Scanner sc) {
+        System.out.print("삭제할 영화관 번호 : ");
+        int theaterId = Integer.parseInt(sc.nextLine());
+        int cnt = -1;
+        cnt = tDao.deleteTheater(theaterId);
+        if (cnt > 0) {
+            System.out.println("영화관 삭제 성공");
+        } else {
+            System.out.println("영화관 삭제 실패");
+        }
+    }
+
+    public void getAllTheaters() {
+        List<Theater> theaterList = tDao.getAllTheaters();
+        if (theaterList != null) {
+            System.out.printf("%-5s %-10s %-8s%n", "번호", "영화관이름", "좌석수");
+            for (Theater bean : theaterList) {
+                System.out.printf("%-5d %-10s %-8d%n",
+                        bean.getTheaterId(),
+                        bean.getName(),
+                        bean.getTotalSeats());
+            }
+        } else {
+            System.out.println("영화관 정보가 없습니다.");
+        }
+    }
+
     // ScheduleDAO
     public void addSchedule(Scanner sc) {
         int cnt = -1;
@@ -224,15 +270,15 @@ public class DataManager {
             if (Pattern.matches(regex, showTime)) {
                 break;
             } else {
-                System.out.println("유효하지 않은 날짜 형식입니다.");
+                System.out.println("유효하지 않은 시간 형식입니다.");
             }
         }
         schedule.setShowTime(showTime);
         cnt = sDao.addSchedule(schedule);
         if(cnt > 0) {
-            System.out.println("관 추가 성공");
+            System.out.println("상영 계획 추가 성공");
         } else {
-            System.out.println("관 추가 실패");
+            System.out.println("상영 계획 추가 실패");
         }
     }
 
@@ -240,17 +286,23 @@ public class DataManager {
 
     }
 
-    public void getSchedulesByMovieId(Scanner sc) {
+    public int getSchedulesByMovieId(Scanner sc) {
         System.out.print("영화번호로 선택 : ");
         int movieId = Integer.parseInt(sc.nextLine());
         List<Schedule> scheduleList = sDao.getSchedulesByMovieId(movieId);
         if (scheduleList != null) {
+            System.out.printf("%-5s %-20s %-8s %-12s%n", "번호", "제목", "관", "상영시간");
             for (Schedule bean : scheduleList) {
-                System.out.println();
+                System.out.printf("%-5d %-20s %-8s %-16s%n",
+                        bean.getScheduleId(),
+                        bean.getTitle(),
+                        bean.getName(),
+                        bean.getShowTime());
             }
         } else {
             System.out.println("상영 예정이 없습니다.");
         }
+        return movieId;
     }
 
     public void getSchedulesByTheater(int theaterId) {
@@ -258,11 +310,60 @@ public class DataManager {
     }
 
     public void getAllSchedules() {
+        List<Schedule> scheduleList = sDao.getAllSchedules();
+        if (scheduleList != null) {
+            System.out.printf("%-5s %-20s %-8s %-12s%n", "번호", "제목", "관", "상영시간");
+            for (Schedule bean : scheduleList) {
+                System.out.printf("%-5d %-20s %-8s %-16s%n",
+                        bean.getScheduleId(),
+                        bean.getTitle(),
+                        bean.getName(),
+                        bean.getShowTime());
+            }
+        } else {
+            System.out.println("영화관 정보가 없습니다.");
+        }
+    }
 
+    public void updateSchedule(Scanner sc) {
+        int cnt = -1;
+        Schedule schedule = new Schedule();
+        System.out.print("일정 번호 : ");
+        schedule.setScheduleId(Integer.parseInt(sc.nextLine()));
+        String showTime = "";
+        while (true) {
+            System.out.print("상영시간(YYYY-MM-DD HH:MM) : ");
+            showTime = sc.nextLine();
+            String regex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]) ([01]\\d|2[0-3]):([0-5]\\d)$";
+            if (Pattern.matches(regex, showTime)) {
+                break;
+            } else {
+                System.out.println("유효하지 않은 시간 형식입니다.");
+            }
+        }
+        schedule.setShowTime(showTime);
+        cnt = sDao.updateSchedule(schedule);
+        if(cnt > 0) {
+            System.out.println("상영 계획 변경 성공");
+        } else {
+            System.out.println("상영 계획 변경 실패");
+        }
+    }
+
+    public void deleteSchedule(Scanner sc) {
+        System.out.print("삭제할 일정 번호 : ");
+        int scheduleId = Integer.parseInt(sc.nextLine());
+        int cnt = -1;
+        cnt = sDao.deleteSchedule(scheduleId);
+        if (cnt > 0) {
+            System.out.println("일정 삭제 성공");
+        } else {
+            System.out.println("일정 삭제 실패");
+        }
     }
 
     // ReservationDAO
-    public void addReservation(Scanner sc) {
+    public void addReservation(Scanner sc, int movieId) {
 
     }
 

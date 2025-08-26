@@ -29,7 +29,7 @@ public class Main {
                 }
             } else { // 로그인 후
                 System.out.println("메뉴 선택");
-                System.out.println("0.로그아웃, 1.내정보, 2.영화관련");
+                System.out.println("0.로그아웃, 1.내정보, 2.영화관련, 3.영화관관리, 4.일정관리");
                 int menu = Integer.parseInt(sc.nextLine());
                 switch (menu) {
                     case 0:
@@ -40,13 +40,13 @@ public class Main {
                         break;
                     case 2:
                         manager.getAllMovies();
-                        System.out.println("0.돌아가기, 1.예약, 2.추가, 3.수정, 4.삭제");
+                        System.out.println("0.돌아가기, 1.예매, 2.추가, 3.수정, 4.삭제");
                         menu = Integer.parseInt(sc.nextLine());
                         switch (menu) {
                             case 0:
                                 break;
                             case 1:
-                                manager.addReservation(sc);
+                                int movieId = manager.getSchedulesByMovieId(sc);
                                 break;
                             case 2:
                                 manager.addMovie(sc);
@@ -56,6 +56,44 @@ public class Main {
                                 break;
                             case 4:
                                 manager.deleteMovie(sc);
+                                break;
+                            default:
+                        }
+                        break;
+                    case 3:
+                        manager.getAllTheaters();;
+                        System.out.println("0.돌아가기, 1.추가, 2.수정, 3.삭제");
+                        menu = Integer.parseInt(sc.nextLine());
+                        switch (menu) {
+                            case 0:
+                                break;
+                            case 1:
+                                manager.addTheater(sc);
+                                break;
+                            case 2:
+                                manager.updateTheater(sc);
+                                break;
+                            case 3:
+                                manager.deleteTheater(sc);
+                                break;
+                            default:
+                        }
+                        break;
+                    case 4:
+                        manager.getAllSchedules();;
+                        System.out.println("0.돌아가기, 1.추가, 2.수정, 3.삭제");
+                        menu = Integer.parseInt(sc.nextLine());
+                        switch (menu) {
+                            case 0:
+                                break;
+                            case 1:
+                                manager.addSchedule(sc);
+                                break;
+                            case 2:
+                                manager.updateSchedule(sc);
+                                break;
+                            case 3:
+                                manager.deleteSchedule(sc);
                                 break;
                             default:
                         }
