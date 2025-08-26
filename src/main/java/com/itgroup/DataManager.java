@@ -3,8 +3,7 @@ package com.itgroup;
 import com.itgroup.bean.*;
 import com.itgroup.dao.*;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DataManager {
@@ -363,8 +362,35 @@ public class DataManager {
     }
 
     // ReservationDAO
-    public void addReservation(Scanner sc, int movieId) {
-
+    public void addReservation(Scanner sc, int movieId, Users loginUser) {
+        System.out.print("상영 번호 : ");
+        int scheduleId = Integer.parseInt(sc.nextLine());
+        List<Reservation> reservationList = rDao.getReservationsBySchedule(scheduleId);
+        printSeats(reservationList, 10, 10);
+        System.out.print("예약할 자리(,로 여러개 입력도 가능) : ");
+        String seat = sc.nextLine();
+        String regex = "^([A-J](?:10|[1-9]))(,\\s*[A-J](?:10|[1-9]))*$\n";
+        if (!Pattern.matches(regex, seat)) {
+            return;
+        }
+        List<String> seats = Arrays.stream(seat.split(",")).map(String::strip).toList();
+        int cnt = 1;
+        Reservation reservation = new Reservation();
+        reservation.setScheduleId(scheduleId);
+        reservation.setUserId(loginUser.getUserId());
+        reservation.setPrice(mDao.getMovieById(movieId).getPrice());
+        for (String str : seats) {
+            int rowNum =  (str.charAt(0) - 'A' + 1);
+            int colNum = Integer.parseInt(str.substring(1));
+            reservation.setRowNum(rowNum);
+            reservation.setColNum(colNum);
+            cnt *= rDao.addReservation(reservation);
+        }
+        if (cnt > 0) {
+            System.out.println("좌석 예약 성공");
+        } else {
+            System.out.println("좌석 예약 실패. 관리자 호출 바람");
+        }
     }
 
     public void getReservationById(int reservationId) {
@@ -382,4 +408,38 @@ public class DataManager {
     public void deleteReservation(int reservationId) {
 
     }
+
+    // 예약된 좌석을 체크해서 콘솔에 좌석 배치 출력
+    public void printSeats(List<Reservation> reservationList, int rowCount, int colCount) {
+        // 예약 좌석을 빠르게 찾기 위해 Set으로 변환
+        Set<String> reserved = new HashSet<>();
+        for (Reservation r : reservationList) {
+            reserved.add(r.getRowNum() + "-" + r.getColNum());
+            // 예: "3-5" 형태로 저장
+        }
+
+        // 행은 문자 (A,B,C...)로 표현
+        for (int row = 1; row <= rowCount; row++) {
+            char rowLabel = (char) ('A' + row - 1); // 1 → A, 2 → B ...
+            System.out.print(rowLabel + " ");
+
+            for (int col = 1; col <= colCount; col++) {
+                String key = row + "-" + col;
+                if (reserved.contains(key)) {
+                    System.out.print("■ "); // 예약됨
+                } else {
+                    System.out.print("□ "); // 예약 가능
+                }
+            }
+            System.out.println(); // 줄바꿈
+        }
+
+        // 열 번호 표시 (옵션)
+        System.out.print("   ");
+        for (int col = 1; col <= colCount; col++) {
+            System.out.printf("%2d", col);
+        }
+        System.out.println();
+    }
+
 }

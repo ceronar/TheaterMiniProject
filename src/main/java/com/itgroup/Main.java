@@ -47,6 +47,7 @@ public class Main {
                                 break;
                             case 1:
                                 int movieId = manager.getSchedulesByMovieId(sc);
+                                manager.addReservation(sc, movieId, loginUser);
                                 break;
                             case 2:
                                 manager.addMovie(sc);
