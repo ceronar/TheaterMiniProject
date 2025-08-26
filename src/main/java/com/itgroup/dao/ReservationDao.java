@@ -20,7 +20,7 @@ public class ReservationDao extends SuperDao {
             bean = new Reservation();
             bean.setReservationId(rs.getInt("RESERVATION_ID"));
             bean.setScheduleId(rs.getInt("SCHEDULE_ID"));
-            bean.setUserId(rs.getString("userId"));
+            bean.setUserId(rs.getString("USER_ID"));
             bean.setRowNum(rs.getInt("ROW_NUM"));
             bean.setColNum(rs.getInt("COL_NUM"));
             bean.setPrice(rs.getInt("PRICE"));
@@ -37,7 +37,7 @@ public class ReservationDao extends SuperDao {
 
     public int addReservation(Reservation reservation) {
         int cnt = -1;
-        String sql = "insert into RESERVATION(RESERVATION_ID, SCHEDULE_ID, USER_ID, ROW_NUM, COL_NUM, PRICE, RESERVED_AT) values(RESERVATION_SEQ.NEXTVAL, ?, ?, ?, ?, ?, TIMESTAMP)";
+        String sql = "insert into RESERVATION(RESERVATION_ID, SCHEDULE_ID, USER_ID, ROW_NUM, COL_NUM, PRICE, RESERVED_AT) values(RESERVATION_SEQ.NEXTVAL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
@@ -47,7 +47,7 @@ public class ReservationDao extends SuperDao {
             pstmt.setString(2, reservation.getUserId());
             pstmt.setInt(3, reservation.getRowNum());
             pstmt.setInt(4, reservation.getColNum());
-            pstmt.setInt(4, reservation.getPrice());
+            pstmt.setInt(5, reservation.getPrice());
             cnt = pstmt.executeUpdate();
             conn.commit();
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class ReservationDao extends SuperDao {
                 " JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID" +
                 " JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID" +
                 " JOIN USERS U ON R.USER_ID = U.USER_ID" +
-                " WHERE USER_ID = ?" +
+                " WHERE U.USER_ID = ?" +
                 " ORDER BY R.ROW_NUM, R.COL_NUM";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -105,7 +105,7 @@ public class ReservationDao extends SuperDao {
                 " JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID" +
                 " JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID" +
                 " JOIN USERS U ON R.USER_ID = U.USER_ID" +
-                " WHERE SCHEDULE_ID = ?" +
+                " WHERE R.SCHEDULE_ID = ?" +
                 " ORDER BY R.ROW_NUM, R.COL_NUM";
         Connection conn = null;
         PreparedStatement pstmt = null;

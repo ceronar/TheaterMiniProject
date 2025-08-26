@@ -73,7 +73,7 @@ public class TheaterDao extends SuperDao {
 
     public List<Theater> getAllTheaters() {
         List<Theater> theaterList = new ArrayList<>();
-        String sql = "SELECT * FROM THEATER";
+        String sql = "SELECT * FROM THEATER ORDER BY THEATER_ID";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;

@@ -76,7 +76,7 @@ public class MovieDao extends SuperDao {
 
     public List<Movie> getAllMovies() {
         List<Movie> movieList = new ArrayList<>();
-        String sql = "SELECT * FROM MOVIE";
+        String sql = "SELECT * FROM MOVIE ORDER BY MOVIE_ID";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;

@@ -257,8 +257,10 @@ public class DataManager {
     public void addSchedule(Scanner sc) {
         int cnt = -1;
         Schedule schedule = new Schedule();
+        this.getAllTheaters();
         System.out.print("관 번호 : ");
         schedule.setTheaterId(Integer.parseInt(sc.nextLine()));
+        this.getAllMovies();
         System.out.print("영화 번호 : ");
         schedule.setMovieId(Integer.parseInt(sc.nextLine()));
         String showTime = "";
@@ -369,7 +371,7 @@ public class DataManager {
         printSeats(reservationList, 10, 10);
         System.out.print("예약할 자리(,로 여러개 입력도 가능) : ");
         String seat = sc.nextLine();
-        String regex = "^([A-J](?:10|[1-9]))(,\\s*[A-J](?:10|[1-9]))*$\n";
+        String regex = "^([A-J](?:10|[1-9]))(,\\s*[A-J](?:10|[1-9]))*$";
         if (!Pattern.matches(regex, seat)) {
             return;
         }
@@ -435,7 +437,7 @@ public class DataManager {
         }
 
         // 열 번호 표시 (옵션)
-        System.out.print("   ");
+        System.out.print(" ");
         for (int col = 1; col <= colCount; col++) {
             System.out.printf("%2d", col);
         }

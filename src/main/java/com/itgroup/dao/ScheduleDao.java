@@ -18,7 +18,7 @@ public class ScheduleDao extends SuperDao {
             bean.setScheduleId(rs.getInt("SCHEDULE_ID"));
             bean.setMovieId(rs.getInt("MOVIE_ID"));
             bean.setTheaterId(rs.getInt("THEATER_ID"));
-            bean.setShowTime(String.valueOf(rs.getDate("SHOW_TIME")));
+            bean.setShowTime(rs.getString("SHOW_TIME"));
             bean.setTitle(rs.getString("TITLE"));
             bean.setName(rs.getString("NAME"));
         } catch (SQLException e) {
@@ -29,7 +29,7 @@ public class ScheduleDao extends SuperDao {
 
     public int addSchedule(Schedule schedule) {
         int cnt = -1;
-        String sql = "insert into SCHEDULE(SCHEDULE_ID, MOVIE_ID, THEATER_ID, SHOW_TIME) values(SCHEDULE_SEQ.NEXTVAL, ?, ?, (TO_DATE(?, 'YYYY-MM-DD HH24:MI')";
+        String sql = "insert into SCHEDULE(SCHEDULE_ID, MOVIE_ID, THEATER_ID, SHOW_TIME) values(SCHEDULE_SEQ.NEXTVAL, ?, ?, (TO_DATE(?, 'YYYY-MM-DD HH24:MI')))";
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
@@ -55,7 +55,7 @@ public class ScheduleDao extends SuperDao {
 
     public List<Schedule> getSchedulesByMovieId(int movieId) {
         List<Schedule> scheduleList = new ArrayList<>();
-        String sql = "SELECT S.SCHEDULE_ID, S.MOVIE_ID, S.THEATER_ID, S.SHOW_TIME, M.TITLE, T.NAME FROM SCHEDULE S JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID WHERE S.MOVIE_ID = ? ORDER BY S.SHOW_TIME";
+        String sql = "SELECT S.SCHEDULE_ID, S.MOVIE_ID, S.THEATER_ID, TO_CHAR(S.SHOW_TIME, 'YYYY-MM-DD HH24:MI') AS SHOW_TIME, M.TITLE, T.NAME FROM SCHEDULE S JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID WHERE S.MOVIE_ID = ? ORDER BY S.SHOW_TIME";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -77,7 +77,7 @@ public class ScheduleDao extends SuperDao {
 
     public List<Schedule> getAllSchedules() {
         List<Schedule> scheduleList = new ArrayList<>();
-        String sql = "SELECT S.SCHEDULE_ID, S.MOVIE_ID, S.THEATER_ID, S.SHOW_TIME, M.TITLE, T.NAME FROM SCHEDULE S JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID";
+        String sql = "SELECT S.SCHEDULE_ID, S.MOVIE_ID, S.THEATER_ID, TO_CHAR(S.SHOW_TIME, 'YYYY-MM-DD HH24:MI') AS SHOW_TIME, M.TITLE, T.NAME FROM SCHEDULE S JOIN MOVIE M ON S.MOVIE_ID = M.MOVIE_ID JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID ORDER BY S.SCHEDULE_ID DESC";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
