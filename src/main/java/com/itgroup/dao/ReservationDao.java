@@ -1,6 +1,7 @@
 package com.itgroup.dao;
 
 import com.itgroup.bean.Reservation;
+import com.itgroup.bean.Users;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +28,7 @@ public class ReservationDao extends SuperDao {
             bean.setReservedAt(String.valueOf(rs.getTimestamp("RESERVED_AT")));
             bean.setTitle(rs.getString("TITLE"));
             bean.setName(rs.getString("NAME"));
-            bean.setShowTime(String.valueOf(rs.getDate("SHOW_TIME")));
+            bean.setShowTime(rs.getString("SHOW_TIME"));
             bean.setUserName(rs.getString("USER_NAME"));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,7 +71,7 @@ public class ReservationDao extends SuperDao {
 
     public List<Reservation> getReservationsByUser(String userId) {
         List<Reservation> reservationList = new ArrayList<>();
-        String sql = "SELECT R.RESERVATION_ID, R.SCHEDULE_ID, R.USER_ID, R.ROW_NUM, R.COL_NUM, R.PRICE, R.RESERVED_AT, M.TITLE, T.NAME, S.SHOW_TIME, U.USER_NAME" +
+        String sql = "SELECT R.RESERVATION_ID, R.SCHEDULE_ID, R.USER_ID, R.ROW_NUM, R.COL_NUM, R.PRICE, R.RESERVED_AT, M.TITLE, T.NAME, TO_CHAR(S.SHOW_TIME, 'YYYY-MM-DD HH24:MI') AS SHOW_TIME, U.USER_NAME" +
                 " FROM RESERVATION R" +
                 " JOIN SCHEDULE S ON R.SCHEDULE_ID = S.SCHEDULE_ID" +
                 " JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID" +
@@ -99,7 +100,7 @@ public class ReservationDao extends SuperDao {
 
     public List<Reservation> getReservationsBySchedule(int scheduleId) {
         List<Reservation> reservationList = new ArrayList<>();
-        String sql = "SELECT R.RESERVATION_ID, R.SCHEDULE_ID, R.USER_ID, R.ROW_NUM, R.COL_NUM, R.PRICE, R.RESERVED_AT, M.TITLE, T.NAME, S.SHOW_TIME, U.USER_NAME" +
+        String sql = "SELECT R.RESERVATION_ID, R.SCHEDULE_ID, R.USER_ID, R.ROW_NUM, R.COL_NUM, R.PRICE, R.RESERVED_AT, M.TITLE, T.NAME, TO_CHAR(S.SHOW_TIME, 'YYYY-MM-DD HH24:MI') AS SHOW_TIME, U.USER_NAME" +
                 " FROM RESERVATION R" +
                 " JOIN SCHEDULE S ON R.SCHEDULE_ID = S.SCHEDULE_ID" +
                 " JOIN THEATER T ON S.THEATER_ID = T.THEATER_ID" +
@@ -126,15 +127,16 @@ public class ReservationDao extends SuperDao {
         return reservationList;
     }
 
-    public int deleteReservation(int reservationId) {
+    public int deleteReservation(int reservationId, Users loginUser) {
         int cnt = -1;
-        String sql = "delete from RESERVATETION where SCHEDULE_ID = ?";
+        String sql = "delete from RESERVATION where RESERVATION_ID = ? and USER_ID = ?";
         PreparedStatement pstmt = null;
         Connection conn = null;
         try {
             conn = super.getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reservationId);
+            pstmt.setString(2, loginUser.getUserId());
             cnt = pstmt.executeUpdate();
             conn.commit();
         } catch (Exception e) {

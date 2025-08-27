@@ -5,6 +5,7 @@ import com.itgroup.dao.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DataManager {
     private MovieDao mDao = null;
@@ -51,7 +52,7 @@ public class DataManager {
 
     public void getAllMovies() {
         List<Movie> movieList = mDao.getAllMovies();
-        if (movieList != null) {
+        if (!movieList.isEmpty()) {
             System.out.printf("%-5s %-20s %-8s %-12s%n", "번호", "제목", "가격", "개봉일");
             for (Movie bean : movieList) {
                 System.out.printf("%-5d %-20s %-8d %-12s%n",
@@ -240,7 +241,7 @@ public class DataManager {
 
     public void getAllTheaters() {
         List<Theater> theaterList = tDao.getAllTheaters();
-        if (theaterList != null) {
+        if (!theaterList.isEmpty()) {
             System.out.printf("%-5s %-10s %-8s%n", "번호", "영화관이름", "좌석수");
             for (Theater bean : theaterList) {
                 System.out.printf("%-5d %-10s %-8d%n",
@@ -283,15 +284,11 @@ public class DataManager {
         }
     }
 
-    public void getScheduleById(int scheduleId) {
-
-    }
-
     public int getSchedulesByMovieId(Scanner sc) {
         System.out.print("영화번호로 선택 : ");
         int movieId = Integer.parseInt(sc.nextLine());
         List<Schedule> scheduleList = sDao.getSchedulesByMovieId(movieId);
-        if (scheduleList != null) {
+        if (!scheduleList.isEmpty()) {
             System.out.printf("%-5s %-20s %-8s %-12s%n", "번호", "제목", "관", "상영시간");
             for (Schedule bean : scheduleList) {
                 System.out.printf("%-5d %-20s %-8s %-16s%n",
@@ -306,13 +303,9 @@ public class DataManager {
         return movieId;
     }
 
-    public void getSchedulesByTheater(int theaterId) {
-
-    }
-
     public void getAllSchedules() {
         List<Schedule> scheduleList = sDao.getAllSchedules();
-        if (scheduleList != null) {
+        if (!scheduleList.isEmpty()) {
             System.out.printf("%-5s %-20s %-8s %-12s%n", "번호", "제목", "관", "상영시간");
             for (Schedule bean : scheduleList) {
                 System.out.printf("%-5d %-20s %-8s %-16s%n",
@@ -365,6 +358,7 @@ public class DataManager {
 
     // ReservationDAO
     public void addReservation(Scanner sc, int movieId, Users loginUser) {
+        int choice = 1;
         System.out.print("상영 번호 : ");
         int scheduleId = Integer.parseInt(sc.nextLine());
         List<Reservation> reservationList = rDao.getReservationsBySchedule(scheduleId);
@@ -375,7 +369,20 @@ public class DataManager {
         if (!Pattern.matches(regex, seat)) {
             return;
         }
+        // 예약된 좌석을 "A10" 이런 형태로 Set에 저장
+        Set<String> reservedSeats = reservationList.stream()
+                .map(r -> r.getRowNum() + String.valueOf(r.getColNum())) // 예: A + 10
+                .collect(Collectors.toSet());
         List<String> seats = Arrays.stream(seat.split(",")).map(String::strip).toList();
+        for (String seatChoice : seats) {
+            if (reservedSeats.contains(seatChoice)) {
+                System.out.println(seatChoice + " 좌석은 이미 예약됨");
+                choice = 0;
+            }
+        }
+        if (choice == 0) {
+            return;
+        }
         int cnt = 1;
         Reservation reservation = new Reservation();
         reservation.setScheduleId(scheduleId);
@@ -395,20 +402,38 @@ public class DataManager {
         }
     }
 
-    public void getReservationById(int reservationId) {
-
-    }
-
     public void getReservationsByUser(String userId) {
-
+        List<Reservation> reservationList = rDao.getReservationsByUser(userId);
+        if (!reservationList.isEmpty()) {
+            System.out.printf("%-4s %-15s %-10s %-20s %-8s %-12s %-20s%n",
+                    "예약번호", "영화제목", "상영관", "상영시간", "좌석", "가격", "예약자");
+            for (Reservation r : reservationList) {
+                char rowChar = (char) ('A' + (r.getRowNum() - 1));
+                String seat = rowChar + String.valueOf(r.getColNum());
+                System.out.printf("%-4d %-15s %-10s %-20s %-8s %-12d %-20s%n",
+                        r.getReservationId(),
+                        r.getTitle(),
+                        r.getName(),
+                        r.getShowTime(),
+                        seat,
+                        r.getPrice(),
+                        r.getUserName());
+            }
+        } else {
+            System.out.println("예약 내용이 없습니다.");
+        }
     }
 
-    public void getReservationsBySchedule(int scheduleId) {
-
-    }
-
-    public void deleteReservation(int reservationId) {
-
+    public void deleteReservation(Scanner sc, Users loginUser) {
+        System.out.print("예약취소할 예약번호 : ");
+        int cancelRes = Integer.parseInt(sc.nextLine());
+        int cnt = -1;
+        cnt = rDao.deleteReservation(cancelRes, loginUser);
+        if (cnt > 0) {
+            System.out.println("예약 취소 성공");
+        } else {
+            System.out.println("예약 취소 실패");
+        }
     }
 
     // 예약된 좌석을 체크해서 콘솔에 좌석 배치 출력
@@ -443,5 +468,4 @@ public class DataManager {
         }
         System.out.println();
     }
-
 }

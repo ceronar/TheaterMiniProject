@@ -29,7 +29,7 @@ public class Main {
                 }
             } else { // 로그인 후
                 System.out.println("메뉴 선택");
-                System.out.println("0.로그아웃, 1.내정보, 2.영화관련, 3.영화관관리, 4.일정관리");
+                System.out.println("0.로그아웃, 1.내정보, 2.영화관련, 3.예약관리, 4.영화관관리, 5.일정관리");
                 int menu = Integer.parseInt(sc.nextLine());
                 switch (menu) {
                     case 0:
@@ -62,6 +62,13 @@ public class Main {
                         }
                         break;
                     case 3:
+                        manager.getReservationsByUser(loginUser.getUserId());
+                        System.out.println("0.돌아가기, 1.예약취소");
+                        if (Integer.parseInt(sc.nextLine()) == 1) {
+                            manager.deleteReservation(sc, loginUser);
+                        }
+                        break;
+                    case 4:
                         manager.getAllTheaters();;
                         System.out.println("0.돌아가기, 1.추가, 2.수정, 3.삭제");
                         menu = Integer.parseInt(sc.nextLine());
@@ -80,7 +87,7 @@ public class Main {
                             default:
                         }
                         break;
-                    case 4:
+                    case 5:
                         manager.getAllSchedules();;
                         System.out.println("0.돌아가기, 1.추가, 2.수정, 3.삭제");
                         menu = Integer.parseInt(sc.nextLine());
