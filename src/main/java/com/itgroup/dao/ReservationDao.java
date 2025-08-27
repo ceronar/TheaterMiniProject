@@ -64,11 +64,6 @@ public class ReservationDao extends SuperDao {
         return cnt;
     }
 
-    public Reservation getReservationById(int reservationId) {
-
-        return null;
-    }
-
     public List<Reservation> getReservationsByUser(String userId) {
         List<Reservation> reservationList = new ArrayList<>();
         String sql = "SELECT R.RESERVATION_ID, R.SCHEDULE_ID, R.USER_ID, R.ROW_NUM, R.COL_NUM, R.PRICE, R.RESERVED_AT, M.TITLE, T.NAME, TO_CHAR(S.SHOW_TIME, 'YYYY-MM-DD HH24:MI') AS SHOW_TIME, U.USER_NAME" +

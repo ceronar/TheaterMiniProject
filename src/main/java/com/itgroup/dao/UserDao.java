@@ -86,7 +86,7 @@ public class UserDao extends SuperDao {
         return cnt;
     }
 
-    public int deleteUser(String id) {
+    public int deleteUser(String userId) {
         int cnt = -1;
         String sql = "delete from users where user_id = ?";
         PreparedStatement pstmt = null;
@@ -94,7 +94,7 @@ public class UserDao extends SuperDao {
         try {
             conn = super.getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, id);
+            pstmt.setString(1, userId);
             cnt = pstmt.executeUpdate();
             conn.commit();
         } catch (Exception e) {

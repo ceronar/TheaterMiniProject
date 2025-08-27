@@ -1,7 +1,6 @@
 package com.itgroup.dao;
 
 import com.itgroup.bean.Movie;
-import com.itgroup.bean.Theater;
 
 import java.sql.*;
 import java.util.ArrayList;
